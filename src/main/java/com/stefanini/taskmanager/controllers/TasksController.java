@@ -15,7 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -23,12 +23,12 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/tasks")
 public class TasksController {
-    private CreateTaskService createTaskService;
-    private ListAllTasksService listAllTasksService;
-    private GetTaskByIdService getTaskByIdService;
-    private DeleteTaskByIdService deleteTaskByIdService;
-    private UpdateTaskStatusService updateTaskStatusService;
-    private UpdateTaskService updateTaskService;
+    private final CreateTaskService createTaskService;
+    private final ListAllTasksService listAllTasksService;
+    private final GetTaskByIdService getTaskByIdService;
+    private final DeleteTaskByIdService deleteTaskByIdService;
+    private final UpdateTaskStatusService updateTaskStatusService;
+    private final UpdateTaskService updateTaskService;
 
     @Autowired
     public TasksController(CreateTaskService createTaskService,
@@ -112,7 +112,7 @@ public class TasksController {
             log.error(ex);
             throw new InternalServerErrorException(ExceptionMessages.INTERNAL_SERVER_ERROR.getMessage());
         }
-        return (!foundTask.isEmpty())
+        return (foundTask.isPresent())
                 ? ResponseEntity.status(HttpStatus.OK).body(foundTask)
                 : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
