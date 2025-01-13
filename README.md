@@ -32,7 +32,7 @@ git clone https://github.com/GustavoReinaldi/taskmanager.git
 ```
 
 ### Configure o banco de dados:
-1. Crie um banco de dados: Utilize os scripts .sql contidos na pasta "banco de dados".
+1. Crie um banco de dados: Utilize os scripts .sql contidos na pasta "database".
 2. Após a execução dos configure as variáveis de ambiente do projeto ```DBURL```, ```DBUSR``` e ```DBPWD``` para conexão com o banco de dados. 
 
 #### Exemplo de variáveis:

@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-preview-ubuntu-22.04
+    container_name: sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Str0ngP@ss
+      - MSSQL_PID=Evaluation
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    restart: no
+
+volumes:
+  sqlserver-data:
+    driver: local
