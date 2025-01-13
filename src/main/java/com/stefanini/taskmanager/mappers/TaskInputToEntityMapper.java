@@ -4,11 +4,11 @@ import com.stefanini.taskmanager.controllers.inputs.TaskInput;
 import com.stefanini.taskmanager.entities.StatusEntity;
 import com.stefanini.taskmanager.entities.TaskEntity;
 
-public class TaskInputToEntity implements DefaultMapper<TaskEntity,TaskInput> {
-    private static TaskInputToEntity INSTANCE;
-    public static TaskInputToEntity getInstance() {
+public class TaskInputToEntityMapper implements DefaultMapper<TaskEntity,TaskInput> {
+    private static TaskInputToEntityMapper INSTANCE;
+    public static TaskInputToEntityMapper getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new TaskInputToEntity();
+            INSTANCE = new TaskInputToEntityMapper();
         }
         return INSTANCE;
     }

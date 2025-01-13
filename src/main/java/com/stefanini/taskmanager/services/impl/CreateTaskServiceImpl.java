@@ -1,11 +1,8 @@
 package com.stefanini.taskmanager.services.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stefanini.taskmanager.controllers.inputs.TaskInput;
-import com.stefanini.taskmanager.dtos.TaskDto;
-import com.stefanini.taskmanager.entities.StatusEntity;
 import com.stefanini.taskmanager.entities.TaskEntity;
-import com.stefanini.taskmanager.mappers.TaskInputToEntity;
+import com.stefanini.taskmanager.mappers.TaskInputToEntityMapper;
 import com.stefanini.taskmanager.repository.TaskRepository;
 import com.stefanini.taskmanager.services.CreateTaskService;
 import jakarta.transaction.Transactional;
@@ -17,11 +14,11 @@ import org.springframework.stereotype.Service;
 @Log4j2
 public class CreateTaskServiceImpl implements CreateTaskService {
     private TaskRepository taskRepository;
-    private TaskInputToEntity inputMapper;
+    private TaskInputToEntityMapper inputMapper;
     @Autowired
     public CreateTaskServiceImpl(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
-        this.inputMapper = TaskInputToEntity.getInstance();
+        this.inputMapper = TaskInputToEntityMapper.getInstance();
     }
 
     @Transactional

@@ -2,10 +2,7 @@ package com.stefanini.taskmanager.controllers;
 
 import com.stefanini.taskmanager.controllers.inputs.TaskInput;
 import com.stefanini.taskmanager.dtos.TaskDto;
-import com.stefanini.taskmanager.services.CreateTaskService;
-import com.stefanini.taskmanager.services.DeleteTaskByIdService;
-import com.stefanini.taskmanager.services.GetTaskByIdService;
-import com.stefanini.taskmanager.services.ListAllTasksService;
+import com.stefanini.taskmanager.services.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,16 +22,22 @@ public class TasksController {
     private ListAllTasksService listAllTasksService;
     private GetTaskByIdService getTaskByIdService;
     private DeleteTaskByIdService deleteTaskByIdService;
+    private UpdateTaskStatusService updateTaskStatusService;
+    private UpdateTaskService updateTaskService;
 
     @Autowired
     public TasksController(CreateTaskService createTaskService,
                            ListAllTasksService listAllTasksService,
                            GetTaskByIdService getTaskByIdService,
-                           DeleteTaskByIdService deleteTaskByIdService) {
+                           DeleteTaskByIdService deleteTaskByIdService,
+                           UpdateTaskStatusService updateTaskStatusService,
+                           UpdateTaskService updateTaskService) {
         this.createTaskService = createTaskService;
         this.listAllTasksService = listAllTasksService;
         this.getTaskByIdService = getTaskByIdService;
         this.deleteTaskByIdService = deleteTaskByIdService;
+        this.updateTaskStatusService = updateTaskStatusService;
+        this.updateTaskService = updateTaskService;
     }
 
     @Operation(
@@ -103,7 +106,7 @@ public class TasksController {
     public ResponseEntity<?> changeTaskStatus(
             @Parameter(description = "id da tarefa") @PathVariable("id-task") Long taskId,
             @Parameter(description = "id do novo status da tarefa") @PathVariable("new-status") Long newStatusId){
-
+        this.updateTaskStatusService.updateTaskStatus(taskId, newStatusId);
         return ResponseEntity.ok().build();
     }
 
@@ -120,7 +123,7 @@ public class TasksController {
     public ResponseEntity<?> updateTask(
             @Parameter(description = "id da tarefa") @PathVariable("id-task") Long taskId,
             @RequestBody TaskInput input){
-
+        this.updateTaskService.updateTaskData(taskId, input);
         return ResponseEntity.ok().build();
     }
 

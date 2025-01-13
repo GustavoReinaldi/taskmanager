@@ -1,6 +1,7 @@
 package com.stefanini.taskmanager.repository;
 
 import com.stefanini.taskmanager.entities.TaskEntity;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -19,5 +20,7 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
     @Query("SELECT task FROM TaskEntity task")
     List<TaskEntity> listAll ();
 
-
+    @Modifying
+    @Query("UPDATE TaskEntity task SET task.status.id = :idNewStatus WHERE task.id = :idTask")
+    void updateTaskStatus(@Param("idTask")Long idTask,@Param("idNewStatus")Long idNewStatus);
 }

@@ -5,7 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Date;
 import java.time.LocalDateTime;
+
 
 @Builder
 @AllArgsConstructor
@@ -15,6 +17,6 @@ public class TaskDto {
     private Long id;
     private String title;
     private String description;
-    private LocalDateTime createdAt;
+    private Date createdAt;
     private String statusName;
 }
