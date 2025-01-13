@@ -18,4 +18,6 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
 
     @Query("SELECT task FROM TaskEntity task")
     List<TaskEntity> listAll ();
+
+
 }

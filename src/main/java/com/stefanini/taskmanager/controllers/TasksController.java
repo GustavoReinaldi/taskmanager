@@ -3,6 +3,8 @@ package com.stefanini.taskmanager.controllers;
 import com.stefanini.taskmanager.controllers.inputs.TaskInput;
 import com.stefanini.taskmanager.dtos.TaskDto;
 import com.stefanini.taskmanager.services.CreateTaskService;
+import com.stefanini.taskmanager.services.DeleteTaskByIdService;
+import com.stefanini.taskmanager.services.GetTaskByIdService;
 import com.stefanini.taskmanager.services.ListAllTasksService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,14 +21,20 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/tasks")
 public class TasksController {
-
     private CreateTaskService createTaskService;
     private ListAllTasksService listAllTasksService;
+    private GetTaskByIdService getTaskByIdService;
+    private DeleteTaskByIdService deleteTaskByIdService;
 
     @Autowired
-    public TasksController(CreateTaskService createTaskService, ListAllTasksService listAllTasksService) {
+    public TasksController(CreateTaskService createTaskService,
+                           ListAllTasksService listAllTasksService,
+                           GetTaskByIdService getTaskByIdService,
+                           DeleteTaskByIdService deleteTaskByIdService) {
         this.createTaskService = createTaskService;
         this.listAllTasksService = listAllTasksService;
+        this.getTaskByIdService = getTaskByIdService;
+        this.deleteTaskByIdService = deleteTaskByIdService;
     }
 
     @Operation(
@@ -76,7 +84,7 @@ public class TasksController {
     public ResponseEntity<?> retrieveTaskById(
             @Parameter(description = "Id da tarefa")
             @RequestParam("task-id") Long taskId) {
-        Optional<TaskDto> foundTask = Optional.empty();
+        Optional<TaskDto> foundTask = getTaskByIdService.getTask(taskId);
 
         return (!foundTask.isEmpty())
                 ? ResponseEntity.status(HttpStatus.OK).body(foundTask)
@@ -128,7 +136,7 @@ public class TasksController {
     @DeleteMapping("/{id-task}")
     public ResponseEntity<?> deleteTask(
             @Parameter(description = "id da tarefa") @PathVariable("id-task") Long taskId){
-
+        this.deleteTaskByIdService.deleteTask(taskId);
         return ResponseEntity.ok().build();
     }
 }
