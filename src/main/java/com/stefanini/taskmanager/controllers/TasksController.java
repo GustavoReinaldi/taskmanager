@@ -2,10 +2,14 @@ package com.stefanini.taskmanager.controllers;
 
 import com.stefanini.taskmanager.controllers.inputs.TaskInput;
 import com.stefanini.taskmanager.dtos.TaskDto;
+import com.stefanini.taskmanager.exceptions.BadRequestException;
+import com.stefanini.taskmanager.exceptions.ExceptionMessages;
+import com.stefanini.taskmanager.exceptions.InternalServerErrorException;
 import com.stefanini.taskmanager.services.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Log4j2
 @RestController
 @RequestMapping("/tasks")
 public class TasksController {
@@ -52,7 +57,14 @@ public class TasksController {
     @PostMapping
     public ResponseEntity<?> createTask(
             @RequestBody TaskInput newTask) {
-        createTaskService.createTask(newTask);
+        if (newTask == null || newTask.getTitle() == null)
+            throw new BadRequestException(ExceptionMessages.BAD_REQUEST.getMessage());
+        try {
+            createTaskService.createTask(newTask);
+        } catch (Exception ex) {
+            log.error(ex);
+            throw new InternalServerErrorException(ExceptionMessages.INTERNAL_SERVER_ERROR.getMessage());
+        }
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -67,7 +79,13 @@ public class TasksController {
     )
     @GetMapping(produces = "application/json")
     public ResponseEntity<?> getAllTasks() {
-        List<TaskDto> foundTasks = listAllTasksService.listAll();
+        List<TaskDto> foundTasks;
+        try {
+            foundTasks = listAllTasksService.listAll();
+        } catch (Exception ex) {
+            log.error(ex);
+            throw new InternalServerErrorException(ExceptionMessages.INTERNAL_SERVER_ERROR.getMessage());
+        }
 
         return (!foundTasks.isEmpty())
                 ? ResponseEntity.status(HttpStatus.OK).body(foundTasks)
@@ -87,12 +105,18 @@ public class TasksController {
     public ResponseEntity<?> retrieveTaskById(
             @Parameter(description = "Id da tarefa")
             @RequestParam("task-id") Long taskId) {
-        Optional<TaskDto> foundTask = getTaskByIdService.getTask(taskId);
-
+        Optional<TaskDto> foundTask;
+        try {
+            foundTask = getTaskByIdService.getTask(taskId);
+        } catch (Exception ex) {
+            log.error(ex);
+            throw new InternalServerErrorException(ExceptionMessages.INTERNAL_SERVER_ERROR.getMessage());
+        }
         return (!foundTask.isEmpty())
                 ? ResponseEntity.status(HttpStatus.OK).body(foundTask)
                 : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
+
     @Operation(
             summary = "Atualizar status da tarefa",
             description = "Endpoint responsável pela atualização de status da tarefa",
@@ -105,8 +129,15 @@ public class TasksController {
     @PatchMapping("/{id-task}/status/{new-status}")
     public ResponseEntity<?> changeTaskStatus(
             @Parameter(description = "id da tarefa") @PathVariable("id-task") Long taskId,
-            @Parameter(description = "id do novo status da tarefa") @PathVariable("new-status") Long newStatusId){
-        this.updateTaskStatusService.updateTaskStatus(taskId, newStatusId);
+            @Parameter(description = "id do novo status da tarefa") @PathVariable("new-status") Long newStatusId) {
+        if (taskId == null || taskId <= 0 || newStatusId == null || newStatusId <= 0)
+            throw new BadRequestException(ExceptionMessages.BAD_REQUEST.getMessage());
+        try {
+            this.updateTaskStatusService.updateTaskStatus(taskId, newStatusId);
+        } catch (Exception ex) {
+            log.error(ex);
+            throw new InternalServerErrorException(ExceptionMessages.INTERNAL_SERVER_ERROR.getMessage());
+        }
         return ResponseEntity.ok().build();
     }
 
@@ -122,8 +153,15 @@ public class TasksController {
     @PutMapping("/{id-task}")
     public ResponseEntity<?> updateTask(
             @Parameter(description = "id da tarefa") @PathVariable("id-task") Long taskId,
-            @RequestBody TaskInput input){
-        this.updateTaskService.updateTaskData(taskId, input);
+            @RequestBody TaskInput input) {
+        if (taskId == null || taskId <= 0 || input == null)
+            throw new BadRequestException(ExceptionMessages.BAD_REQUEST.getMessage());
+        try {
+            this.updateTaskService.updateTaskData(taskId, input);
+        } catch (Exception ex) {
+            log.error(ex);
+            throw new InternalServerErrorException(ExceptionMessages.INTERNAL_SERVER_ERROR.getMessage());
+        }
         return ResponseEntity.ok().build();
     }
 
@@ -138,8 +176,15 @@ public class TasksController {
     )
     @DeleteMapping("/{id-task}")
     public ResponseEntity<?> deleteTask(
-            @Parameter(description = "id da tarefa") @PathVariable("id-task") Long taskId){
-        this.deleteTaskByIdService.deleteTask(taskId);
+            @Parameter(description = "id da tarefa") @PathVariable("id-task") Long taskId) {
+        if (taskId == null || taskId <= 0)
+            throw new BadRequestException(ExceptionMessages.BAD_REQUEST.getMessage());
+        try {
+            this.deleteTaskByIdService.deleteTask(taskId);
+        } catch (Exception ex) {
+            log.error(ex);
+            throw new InternalServerErrorException(ExceptionMessages.INTERNAL_SERVER_ERROR.getMessage());
+        }
         return ResponseEntity.ok().build();
     }
 }
