@@ -2,9 +2,12 @@ package com.stefanini.taskmanager.controllers;
 
 import com.stefanini.taskmanager.controllers.inputs.TaskInput;
 import com.stefanini.taskmanager.dtos.TaskDto;
+import com.stefanini.taskmanager.services.CreateTaskService;
+import com.stefanini.taskmanager.services.ListAllTasksService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +19,15 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/tasks")
 public class TasksController {
+
+    private CreateTaskService createTaskService;
+    private ListAllTasksService listAllTasksService;
+
+    @Autowired
+    public TasksController(CreateTaskService createTaskService, ListAllTasksService listAllTasksService) {
+        this.createTaskService = createTaskService;
+        this.listAllTasksService = listAllTasksService;
+    }
 
     @Operation(
             summary = "Cria tarefa",
@@ -29,6 +41,7 @@ public class TasksController {
     @PostMapping
     public ResponseEntity<?> createTask(
             @RequestBody TaskInput newTask) {
+        createTaskService.createTask(newTask);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -43,7 +56,7 @@ public class TasksController {
     )
     @GetMapping(produces = "application/json")
     public ResponseEntity<?> getAllTasks() {
-        List<TaskDto> foundTasks = new ArrayList<>();
+        List<TaskDto> foundTasks = listAllTasksService.listAll();
 
         return (!foundTasks.isEmpty())
                 ? ResponseEntity.status(HttpStatus.OK).body(foundTasks)

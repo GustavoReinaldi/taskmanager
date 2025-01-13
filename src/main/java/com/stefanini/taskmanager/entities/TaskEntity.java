@@ -24,7 +24,7 @@ public class TaskEntity {
     private String description;
     @Column
     private LocalDateTime createdAt;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn( referencedColumnName = "id", name = "id_status")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "id_status", nullable = false)
     private StatusEntity status;
 }
